@@ -1,0 +1,52 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# OS & Editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs & Temporary files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tmp/
+temp/
+
+# Backend (Go)
+backend/bin/
+backend/tmp/
+backend/uploads/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Frontend (Node / Vite / TypeScript)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
+*.tsbuildinfo
+
+# Database local files
+*.sqlite
+*.sqlite3
+*.db
+pgdata/

@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --bg-paper: #faf8f5;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f2efe9;
+  --border-ledger: #d6d0c4;
+  --border-strong: #78716c;
+  --ink-primary: #1c1917;
+  --ink-secondary: #57534e;
+  --brand-forest: #1e3a2f;
+  --brand-forest-hover: #162c24;
+  --accent-terracotta: #c2410c;
+  --error-text: #b91c1c;
+  --error-bg: #fef2f2;
+  --success-text: #15803d;
+  --focus-ring: #1e3a2f;
+}
+
+@layer base {
+  html {
+    font-family: "Plus Jakarta Sans", "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-paper);
+    color: var(--ink-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--bg-paper);
+    color: var(--ink-primary);
+  }
+
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  label[for],
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+    font-size: max(1rem, 1em);
+  }
+}
+
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.field-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.625rem 0.875rem;
+  background-color: var(--bg-surface);
+  color: var(--ink-primary);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 6px;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.field-input:hover:not(:disabled) {
+  border-color: var(--ink-primary);
+}
+
+.field-input:is(:user-invalid, .user-invalid-fallback) {
+  border-color: var(--error-text);
+  background-color: var(--error-bg);
+}
+
+.field-input:user-valid {
+  border-color: var(--success-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

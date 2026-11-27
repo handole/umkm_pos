@@ -1,0 +1,2943 @@
+basePath: /
+definitions:
+  auth.LoginRequest:
+    properties:
+      password:
+        type: string
+      tenant_code:
+        description: Optional in single-tenant; required in multi-tenant
+        type: string
+      username:
+        description: Accepts username or email
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.PinLoginRequest:
+    properties:
+      outlet_id:
+        type: integer
+      pin:
+        type: string
+      username:
+        type: string
+    required:
+    - pin
+    - username
+    type: object
+  auth.RegisterRequest:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      outlet_ids:
+        description: List of outlet IDs this user can access
+        items:
+          type: integer
+        type: array
+      password:
+        minLength: 6
+        type: string
+      phone:
+        type: string
+      pin:
+        description: 6-digit PIN for quick POS unlock / attendance
+        type: string
+      role_name:
+        description: '''SUPERADMIN'', ''STORE_MANAGER'', ''CASHIER'', ''WAREHOUSE'',
+          ''HR_FINANCE'''
+        type: string
+      tenant_code:
+        description: Optional in single-tenant; specifies target tenant
+        type: string
+      tenant_name:
+        description: Optional; used if auto-provisioning initial tenant
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - full_name
+    - password
+    - role_name
+    - username
+    type: object
+  inventory.CreateLocationRequest:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+      outlet_id:
+        type: integer
+      type:
+        enum:
+        - WAREHOUSE
+        - STORE_FRONT
+        - TRANSIT
+        - DAMAGED
+        type: string
+    required:
+    - code
+    - name
+    - outlet_id
+    - type
+    type: object
+  inventory.CreatePurchaseOrderItemRequest:
+    properties:
+      quantity_ordered:
+        type: integer
+      unit_cost:
+        minimum: 0
+        type: integer
+      uom_uuid:
+        type: string
+      variant_uuid:
+        type: string
+    required:
+    - quantity_ordered
+    - unit_cost
+    - variant_uuid
+    type: object
+  inventory.CreatePurchaseOrderRequest:
+    properties:
+      destination_location_uuid:
+        type: string
+      expected_date:
+        description: YYYY-MM-DD
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/inventory.CreatePurchaseOrderItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      order_date:
+        description: YYYY-MM-DD
+        type: string
+      outlet_id:
+        type: integer
+      supplier_uuid:
+        type: string
+    required:
+    - destination_location_uuid
+    - items
+    - order_date
+    - outlet_id
+    - supplier_uuid
+    type: object
+  inventory.CreateStockOpnameRequest:
+    properties:
+      location_uuid:
+        type: string
+      notes:
+        type: string
+    required:
+    - location_uuid
+    type: object
+  inventory.CreateStockTransferItemRequest:
+    properties:
+      quantity_sent:
+        type: integer
+      variant_uuid:
+        type: string
+    required:
+    - quantity_sent
+    - variant_uuid
+    type: object
+  inventory.CreateStockTransferRequest:
+    properties:
+      destination_location_uuid:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/inventory.CreateStockTransferItemRequest'
+        minItems: 1
+        type: array
+      notes:
+        type: string
+      source_location_uuid:
+        type: string
+    required:
+    - destination_location_uuid
+    - items
+    - source_location_uuid
+    type: object
+  inventory.CreateSupplierRequest:
+    properties:
+      address:
+        type: string
+      code:
+        maxLength: 50
+        type: string
+      contact_name:
+        maxLength: 255
+        type: string
+      email:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      phone:
+        maxLength: 30
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  inventory.ManualAdjustmentRequest:
+    properties:
+      cost_price:
+        minimum: 0
+        type: integer
+      location_uuid:
+        type: string
+      notes:
+        type: string
+      quantity_change:
+        description: Positive for addition, negative for deduction
+        type: integer
+      variant_uuid:
+        type: string
+    required:
+    - location_uuid
+    - notes
+    - quantity_change
+    - variant_uuid
+    type: object
+  inventory.ReceivePurchaseOrderItemRequest:
+    properties:
+      item_uuid:
+        type: string
+      quantity_received:
+        type: integer
+    required:
+    - item_uuid
+    - quantity_received
+    type: object
+  inventory.ReceivePurchaseOrderRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/inventory.ReceivePurchaseOrderItemRequest'
+        minItems: 1
+        type: array
+    required:
+    - items
+    type: object
+  inventory.ReceiveTransferItemRequest:
+    properties:
+      quantity_received:
+        minimum: 0
+        type: integer
+      variant_uuid:
+        type: string
+    required:
+    - quantity_received
+    - variant_uuid
+    type: object
+  inventory.ReceiveTransferRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/inventory.ReceiveTransferItemRequest'
+        minItems: 1
+        type: array
+    required:
+    - items
+    type: object
+  inventory.ScanOpnameBarcodeRequest:
+    properties:
+      barcode:
+        type: string
+      device_id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - barcode
+    - quantity
+    type: object
+  payroll.CalculateCommissionRequest:
+    properties:
+      employee_uuid:
+        type: string
+      order_id:
+        type: integer
+      order_total:
+        minimum: 0
+        type: integer
+      total_items:
+        minimum: 0
+        type: integer
+    required:
+    - employee_uuid
+    - order_id
+    type: object
+  payroll.ClockInRequest:
+    properties:
+      clock_in_at:
+        description: Optional RFC3339; defaults to now
+        type: string
+      employee_uuid:
+        type: string
+      late_minutes:
+        minimum: 0
+        type: integer
+      log_date:
+        description: Optional YYYY-MM-DD; defaults to today
+        type: string
+      outlet_id:
+        type: integer
+      photo_url:
+        maxLength: 500
+        type: string
+      pin:
+        description: Verified if employee is linked to a user with PinHash
+        type: string
+    required:
+    - employee_uuid
+    - outlet_id
+    type: object
+  payroll.ClockOutRequest:
+    properties:
+      clock_out_at:
+        description: Optional RFC3339; defaults to now
+        type: string
+      employee_uuid:
+        type: string
+      log_date:
+        description: Optional YYYY-MM-DD; defaults to today
+        type: string
+      overtime_minutes:
+        minimum: 0
+        type: integer
+      photo_url:
+        maxLength: 500
+        type: string
+      pin:
+        type: string
+    required:
+    - employee_uuid
+    type: object
+  payroll.CreateEmployeeRequest:
+    properties:
+      bank_account_holder:
+        maxLength: 255
+        type: string
+      bank_account_number:
+        maxLength: 100
+        type: string
+      bank_name:
+        maxLength: 100
+        type: string
+      employee_code:
+        maxLength: 50
+        type: string
+      employment_status:
+        enum:
+        - PERMANENT
+        - CONTRACT
+        - PROBATION
+        type: string
+      full_name:
+        maxLength: 255
+        type: string
+      job_title:
+        maxLength: 100
+        type: string
+      joined_date:
+        description: YYYY-MM-DD
+        type: string
+      outlet_id:
+        type: integer
+      phone:
+        maxLength: 30
+        type: string
+      salary_structure:
+        $ref: '#/definitions/payroll.SalaryStructureRequest'
+      user_id:
+        type: integer
+    required:
+    - employee_code
+    - full_name
+    - job_title
+    - joined_date
+    - outlet_id
+    type: object
+  payroll.CreatePeriodRequest:
+    properties:
+      end_date:
+        description: YYYY-MM-DD
+        type: string
+      payment_date:
+        description: YYYY-MM-DD
+        type: string
+      period_name:
+        maxLength: 100
+        type: string
+      start_date:
+        description: YYYY-MM-DD
+        type: string
+    required:
+    - end_date
+    - payment_date
+    - period_name
+    - start_date
+    type: object
+  payroll.FinalizePeriodRequest:
+    properties:
+      adjustments:
+        items:
+          $ref: '#/definitions/payroll.PayrollAdjustmentInput'
+        type: array
+      late_penalty_per_minute:
+        minimum: 0
+        type: integer
+      overtime_rate_per_hour:
+        minimum: 0
+        type: integer
+    type: object
+  payroll.PayrollAdjustmentInput:
+    properties:
+      amount:
+        type: integer
+      component_name:
+        maxLength: 100
+        type: string
+      employee_uuid:
+        type: string
+      item_type:
+        enum:
+        - EARNING
+        - DEDUCTION
+        type: string
+      notes:
+        maxLength: 255
+        type: string
+    required:
+    - component_name
+    - employee_uuid
+    - item_type
+    type: object
+  payroll.RecordAttendanceRequest:
+    properties:
+      employee_uuid:
+        type: string
+      late_minutes:
+        minimum: 0
+        type: integer
+      log_date:
+        description: YYYY-MM-DD
+        type: string
+      outlet_id:
+        type: integer
+      overtime_minutes:
+        minimum: 0
+        type: integer
+      status:
+        enum:
+        - PRESENT
+        - LATE
+        - ABSENT
+        - LEAVE
+        - SICK
+        type: string
+    required:
+    - employee_uuid
+    - log_date
+    - outlet_id
+    - status
+    type: object
+  payroll.SalaryStructureRequest:
+    properties:
+      basic_salary:
+        minimum: 0
+        type: integer
+      bpjs_employment_deduction:
+        minimum: 0
+        type: integer
+      bpjs_health_deduction:
+        minimum: 0
+        type: integer
+      commission_fixed_per_item:
+        minimum: 0
+        type: integer
+      commission_rate_percent:
+        maximum: 100
+        minimum: 0
+        type: number
+      fixed_allowance:
+        minimum: 0
+        type: integer
+      meal_transport_allowance:
+        minimum: 0
+        type: integer
+    type: object
+  payroll.UpdateEmployeeRequest:
+    properties:
+      bank_account_holder:
+        maxLength: 255
+        type: string
+      bank_account_number:
+        maxLength: 100
+        type: string
+      bank_name:
+        maxLength: 100
+        type: string
+      employment_status:
+        enum:
+        - PERMANENT
+        - CONTRACT
+        - PROBATION
+        type: string
+      full_name:
+        maxLength: 255
+        type: string
+      is_active:
+        type: boolean
+      job_title:
+        maxLength: 100
+        type: string
+      outlet_id:
+        type: integer
+      phone:
+        maxLength: 30
+        type: string
+      user_id:
+        type: integer
+    type: object
+  pos.CashLogRequest:
+    properties:
+      amount:
+        type: integer
+      reason:
+        type: string
+      type:
+        enum:
+        - CASH_IN
+        - CASH_OUT
+        type: string
+    required:
+    - amount
+    - reason
+    - type
+    type: object
+  pos.CheckoutItemRequest:
+    properties:
+      discount_amount:
+        minimum: 0
+        type: integer
+      notes:
+        type: string
+      quantity:
+        type: integer
+      uom_uuid:
+        type: string
+      variant_uuid:
+        type: string
+    required:
+    - quantity
+    - variant_uuid
+    type: object
+  pos.CheckoutOrderRequest:
+    properties:
+      coupon_code:
+        type: string
+      customer_id:
+        type: integer
+      discount_amount:
+        minimum: 0
+        type: integer
+      idempotency_key:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/pos.CheckoutItemRequest'
+        minItems: 1
+        type: array
+      location_uuid:
+        description: Gudang/rak toko asal pemotongan stok
+        type: string
+      outlet_id:
+        type: integer
+      payments:
+        items:
+          $ref: '#/definitions/pos.CheckoutPaymentRequest'
+        minItems: 1
+        type: array
+      salesperson_user_id:
+        type: integer
+      tax_amount:
+        minimum: 0
+        type: integer
+    required:
+    - idempotency_key
+    - items
+    - outlet_id
+    - payments
+    type: object
+  pos.CheckoutPaymentRequest:
+    properties:
+      amount:
+        type: integer
+      payment_method_code:
+        type: string
+      reference_number:
+        type: string
+    required:
+    - amount
+    - payment_method_code
+    type: object
+  pos.CloseShiftRequest:
+    properties:
+      actual_cash:
+        minimum: 0
+        type: integer
+      notes:
+        type: string
+    type: object
+  pos.OpenShiftRequest:
+    properties:
+      notes:
+        type: string
+      outlet_id:
+        type: integer
+      starting_cash:
+        minimum: 0
+        type: integer
+    required:
+    - outlet_id
+    type: object
+  pos.VoidOrderRequest:
+    properties:
+      reason:
+        type: string
+    required:
+    - reason
+    type: object
+  product.CreateCategoryRequest:
+    properties:
+      name:
+        type: string
+      parent_id:
+        type: integer
+    required:
+    - name
+    type: object
+  product.CreateProductRequest:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      variants:
+        items:
+          $ref: '#/definitions/product.CreateVariantRequest'
+        minItems: 1
+        type: array
+    required:
+    - name
+    - variants
+    type: object
+  product.CreateUOMRequest:
+    properties:
+      barcode:
+        description: Barcode pada kemasan kardus
+        type: string
+      conversion_rate:
+        description: 1 Dus = 12 Pcs
+        minimum: 1
+        type: integer
+      is_base_uom:
+        type: boolean
+      sell_price:
+        minimum: 0
+        type: integer
+      uom_name:
+        description: '''Pcs'', ''Dus'', ''Karton'''
+        type: string
+    required:
+    - conversion_rate
+    - sell_price
+    - uom_name
+    type: object
+  product.CreateVariantRequest:
+    properties:
+      barcode:
+        description: Retail EAN-13 barcode
+        type: string
+      base_cost_price:
+        minimum: 0
+        type: integer
+      base_sell_price:
+        minimum: 0
+        type: integer
+      min_stock_alert:
+        type: integer
+      sku:
+        type: string
+      uoms:
+        items:
+          $ref: '#/definitions/product.CreateUOMRequest'
+        type: array
+      variant_name:
+        description: '''Standard'', ''Merah - L'', ''500ml'''
+        type: string
+    required:
+    - base_sell_price
+    - sku
+    - variant_name
+    type: object
+  product.UpdateCategoryRequest:
+    properties:
+      is_active:
+        type: boolean
+      name:
+        type: string
+      parent_id:
+        type: integer
+    type: object
+  product.UpdateProductRequest:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      image_url:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  promotion.CartItemDTO:
+    properties:
+      category_id:
+        type: integer
+      quantity:
+        type: integer
+      unit_price:
+        minimum: 0
+        type: integer
+      variant_uuid:
+        type: string
+    required:
+    - quantity
+    - unit_price
+    - variant_uuid
+    type: object
+  promotion.CreateCustomerRequest:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      member_tier:
+        description: REGULAR, SILVER, GOLD, PLATINUM
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    required:
+    - code
+    - name
+    - phone
+    type: object
+  promotion.CreatePromotionRequest:
+    properties:
+      applicable_months:
+        description: '''ALL'' or ''3,4'''
+        type: string
+      code:
+        type: string
+      daily_quota:
+        type: integer
+      days_of_month:
+        description: '''ALL'' or ''25,26,27,28,29,30'''
+        type: string
+      days_of_week:
+        description: '''ALL'' or ''1,2,3,4,5'''
+        type: string
+      description:
+        type: string
+      discount_type:
+        enum:
+        - PERCENTAGE
+        - FIXED_AMOUNT
+        - SPECIAL_PRICE
+        type: string
+      discount_value:
+        type: integer
+      end_date:
+        type: string
+      end_time:
+        description: '''17:00:00'''
+        type: string
+      is_stackable:
+        type: boolean
+      max_discount_amount:
+        type: integer
+      min_order_amount:
+        minimum: 0
+        type: integer
+      min_quantity:
+        minimum: 1
+        type: integer
+      name:
+        type: string
+      outlet_ids:
+        items:
+          type: integer
+        type: array
+      per_customer_quota:
+        type: integer
+      promo_type:
+        enum:
+        - AUTOMATIC
+        - COUPON_CODE
+        type: string
+      rules:
+        items:
+          $ref: '#/definitions/promotion.CreatePromotionRuleRequest'
+        type: array
+      start_date:
+        type: string
+      start_time:
+        description: '''14:00:00'''
+        type: string
+      target_scope:
+        enum:
+        - ENTIRE_TRANSACTION
+        - SPECIFIC_PRODUCTS
+        - SPECIFIC_CATEGORIES
+        type: string
+      total_budget:
+        type: integer
+      total_quota:
+        type: integer
+    required:
+    - code
+    - discount_type
+    - discount_value
+    - end_date
+    - name
+    - promo_type
+    - start_date
+    - target_scope
+    type: object
+  promotion.CreatePromotionRuleRequest:
+    properties:
+      buy_quantity:
+        type: integer
+      buy_variant_uuid:
+        type: string
+      category_uuid:
+        type: string
+      reward_quantity:
+        type: integer
+      reward_variant_uuid:
+        type: string
+      rule_type:
+        enum:
+        - INCLUDE_CATEGORY
+        - EXCLUDE_CATEGORY
+        - INCLUDE_PRODUCT
+        - EXCLUDE_PRODUCT
+        - BUY_X_GET_Y
+        type: string
+      variant_uuid:
+        type: string
+    required:
+    - rule_type
+    type: object
+  promotion.EvaluatePromotionRequest:
+    properties:
+      coupon_code:
+        type: string
+      customer_uuid:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/promotion.CartItemDTO'
+        minItems: 1
+        type: array
+      outlet_id:
+        type: integer
+      transaction_time:
+        type: string
+    required:
+    - items
+    - outlet_id
+    type: object
+  promotion.UpdateCustomerRequest:
+    properties:
+      email:
+        type: string
+      is_active:
+        type: boolean
+      member_tier:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  promotion.UpdatePromotionRequest:
+    properties:
+      applicable_months:
+        type: string
+      daily_quota:
+        type: integer
+      days_of_month:
+        type: string
+      days_of_week:
+        type: string
+      description:
+        type: string
+      discount_value:
+        type: integer
+      end_date:
+        type: string
+      end_time:
+        type: string
+      is_active:
+        type: boolean
+      is_stackable:
+        type: boolean
+      max_discount_amount:
+        type: integer
+      min_order_amount:
+        type: integer
+      min_quantity:
+        type: integer
+      name:
+        type: string
+      per_customer_quota:
+        type: integer
+      start_date:
+        type: string
+      start_time:
+        type: string
+      total_budget:
+        type: integer
+      total_quota:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: Sistem Terpadu POS Kasir, Manajemen Stok Gudang, Katalog Produk, Promosi,
+    dan Absensi & Penggajian.
+  title: UMKM POS & Integrated Backoffice API
+  version: "1.0"
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User login
+      tags:
+      - Auth
+  /api/v1/auth/login/pin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: PIN Login Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.PinLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Quick PIN Login
+      tags:
+      - Auth
+  /api/v1/auth/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Current Profile
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Register Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User registration
+      tags:
+      - Auth
+  /api/v1/categories:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Categories
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateCategoryRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Category
+      tags:
+      - Product
+  /api/v1/categories/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Category
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: UpdateCategoryRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.UpdateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Category
+      tags:
+      - Product
+  /api/v1/customers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Customers
+      tags:
+      - Promotion
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateCustomerRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/promotion.CreateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Customer
+      tags:
+      - Promotion
+  /api/v1/customers/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Customer
+      tags:
+      - Promotion
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: UpdateCustomerRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/promotion.UpdateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Customer
+      tags:
+      - Promotion
+  /api/v1/inventory/adjustments:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ManualAdjustmentRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.ManualAdjustmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Manual Adjustment
+      tags:
+      - Inventory
+  /api/v1/inventory/locations:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Locations
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateLocationRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.CreateLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Location
+      tags:
+      - Inventory
+  /api/v1/inventory/movements:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Stock Movements
+      tags:
+      - Inventory
+  /api/v1/inventory/opnames:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Opnames
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateStockOpnameRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.CreateStockOpnameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Opname
+      tags:
+      - Inventory
+  /api/v1/inventory/opnames/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Opname
+      tags:
+      - Inventory
+  /api/v1/inventory/opnames/{uuid}/approve:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Approve Opname
+      tags:
+      - Inventory
+  /api/v1/inventory/opnames/{uuid}/scan:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: ScanOpnameBarcodeRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.ScanOpnameBarcodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Scan Opname Barcode
+      tags:
+      - Inventory
+  /api/v1/inventory/opnames/{uuid}/submit:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Submit Opname
+      tags:
+      - Inventory
+  /api/v1/inventory/purchase-orders:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Purchase Orders
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreatePurchaseOrderRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.CreatePurchaseOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Purchase Order
+      tags:
+      - Inventory
+  /api/v1/inventory/purchase-orders/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Purchase Order
+      tags:
+      - Inventory
+  /api/v1/inventory/purchase-orders/{uuid}/receive:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: ReceivePurchaseOrderRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.ReceivePurchaseOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Receive Purchase Order
+      tags:
+      - Inventory
+  /api/v1/inventory/stocks:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Stocks
+      tags:
+      - Inventory
+  /api/v1/inventory/suppliers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Suppliers
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateSupplierRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.CreateSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Supplier
+      tags:
+      - Inventory
+  /api/v1/inventory/transfers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Transfers
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateStockTransferRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.CreateStockTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Transfer
+      tags:
+      - Inventory
+  /api/v1/inventory/transfers/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Transfer
+      tags:
+      - Inventory
+  /api/v1/inventory/transfers/{uuid}/receive:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: ReceiveTransferRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/inventory.ReceiveTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Receive Transfer
+      tags:
+      - Inventory
+  /api/v1/payroll/attendance:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Attendance
+      tags:
+      - Payroll
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: RecordAttendanceRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.RecordAttendanceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Record Attendance
+      tags:
+      - Payroll
+  /api/v1/payroll/attendance/clock-in:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Clock In Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.ClockInRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Clock In
+      tags:
+      - Payroll
+  /api/v1/payroll/attendance/clock-out:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Clock Out Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.ClockOutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Clock Out
+      tags:
+      - Payroll
+  /api/v1/payroll/commissions:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Commissions
+      tags:
+      - Payroll
+  /api/v1/payroll/commissions/{uuid}/void:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Void Commission
+      tags:
+      - Payroll
+  /api/v1/payroll/commissions/calculate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CalculateCommissionRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.CalculateCommissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Calculate Order Commission
+      tags:
+      - Payroll
+  /api/v1/payroll/employees:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Employees
+      tags:
+      - Payroll
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateEmployeeRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.CreateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Employee
+      tags:
+      - Payroll
+  /api/v1/payroll/employees/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Employee
+      tags:
+      - Payroll
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: UpdateEmployeeRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.UpdateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Employee
+      tags:
+      - Payroll
+  /api/v1/payroll/employees/{uuid}/salary-structure:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: SalaryStructureRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.SalaryStructureRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Upsert Salary Structure
+      tags:
+      - Payroll
+  /api/v1/payroll/periods:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Periods
+      tags:
+      - Payroll
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreatePeriodRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.CreatePeriodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Period
+      tags:
+      - Payroll
+  /api/v1/payroll/periods/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Period
+      tags:
+      - Payroll
+  /api/v1/payroll/periods/{uuid}/finalize:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: FinalizePeriodRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payroll.FinalizePeriodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Finalize Period
+      tags:
+      - Payroll
+  /api/v1/payroll/periods/{uuid}/preview:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Preview Period Payroll
+      tags:
+      - Payroll
+  /api/v1/payroll/slips:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Snapshots
+      tags:
+      - Payroll
+  /api/v1/payroll/slips/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Snapshot
+      tags:
+      - Payroll
+  /api/v1/payroll/slips/{uuid}/pdf:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Download Snapshot PDF
+      tags:
+      - Payroll
+  /api/v1/pos/checkout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CheckoutOrderRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.CheckoutOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Checkout Order
+      tags:
+      - POS
+  /api/v1/pos/orders:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Orders
+      tags:
+      - POS
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CheckoutOrderRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.CheckoutOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Checkout Order
+      tags:
+      - POS
+  /api/v1/pos/orders/{uuid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Order
+      tags:
+      - POS
+  /api/v1/pos/orders/{uuid}/receipt:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Order Receipt
+      tags:
+      - POS
+  /api/v1/pos/orders/{uuid}/void:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: VoidOrderRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.VoidOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Void Order
+      tags:
+      - POS
+  /api/v1/pos/payment-methods:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Payment Methods
+      tags:
+      - POS
+  /api/v1/pos/reports/export:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Export Sales Report CSV
+      tags:
+      - POS
+  /api/v1/pos/reports/summary:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Sales Report
+      tags:
+      - POS
+  /api/v1/pos/shifts:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Shifts
+      tags:
+      - POS
+  /api/v1/pos/shifts/cash-log:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CashLogRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.CashLogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Add Cash Log
+      tags:
+      - POS
+  /api/v1/pos/shifts/close:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CloseShiftRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.CloseShiftRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Close Shift
+      tags:
+      - POS
+  /api/v1/pos/shifts/current:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Current Shift
+      tags:
+      - POS
+  /api/v1/pos/shifts/open:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: OpenShiftRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pos.OpenShiftRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Open Shift
+      tags:
+      - POS
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Products
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreateProductRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Product
+      tags:
+      - Product
+  /api/v1/products/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Product
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Product By UUID
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: UpdateProductRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Product
+      tags:
+      - Product
+  /api/v1/products/barcode/{code}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Scan Barcode
+      tags:
+      - Product
+  /api/v1/promotions:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: List Promotions
+      tags:
+      - Promotion
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CreatePromotionRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/promotion.CreatePromotionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Promotion
+      tags:
+      - Promotion
+  /api/v1/promotions/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Promotion
+      tags:
+      - Promotion
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Promotion
+      tags:
+      - Promotion
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: UpdatePromotionRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/promotion.UpdatePromotionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Promotion
+      tags:
+      - Promotion
+  /api/v1/promotions/evaluate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: EvaluatePromotionRequest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/promotion.EvaluatePromotionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerAuth: []
+      summary: Evaluate Cart
+      tags:
+      - Promotion
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
